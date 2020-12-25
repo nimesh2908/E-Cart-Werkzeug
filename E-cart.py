@@ -17,7 +17,7 @@ def Ecart(request):
                             }
                             else
                             {
-                            document.getElementById('display').innerHTML = w +"  Watch "+ " = " + + w*2000 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm1' value='Remove' onclick='rmv()'>";
+                            document.getElementById('display').innerHTML = w +"  Watch "+ " = " + w*2000 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm1' value='Remove' onclick='rmv()'>";
                             }
             }
             function btn1(){
@@ -28,7 +28,7 @@ def Ecart(request):
                             }
                             else
                             {
-                            document.getElementById('display1').innerHTML=t+ " T-Shirt " +"="+ + t*1500 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm2' value='Remove' onclick='rmv1()'>";
+                            document.getElementById('display1').innerHTML=t+ " T-Shirt " +"="+ t*1500 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm2' value='Remove' onclick='rmv1()'>";
                             }
             }
             function btn2(){
@@ -39,7 +39,7 @@ def Ecart(request):
                             }
                             else
                             {
-                            document.getElementById('display2').innerHTML=s+ " Shoes " +"="+ + s*4000 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm3' value='Remove' onclick='rmv2()'>";
+                            document.getElementById('display2').innerHTML=s+ " Shoes " +"="+ s*4000 + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm3' value='Remove' onclick='rmv2()'>";
                             }
             }
             function rmv(){
