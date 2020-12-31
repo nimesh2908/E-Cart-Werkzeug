@@ -39,18 +39,20 @@
 		data = %(data)s
             function btn(){
                             var w=document.getElementById('input').value;
+                            var j=0;
                             if(w==0)
                             {
-                                null;
+                               alert("Please Input With Positive Number");
                             }
                             else
                             {
                             	for (var i = 0; i < data.length; i++) {
-                            		if(j==data[i].id){
-	                            		var p=document.getElementById('display').innerHTML = w + data[i].Product + "=" + w*data[i].Price + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm1' value='Remove' onclick='rmv()'>";
-	                            		console.log(p);
-	                            	}
-	                            	break;
+                            			if (j==i){
+	                            			var p=document.getElementById('display').innerHTML = w + data[i].Product + "=" + w*data[i].Price + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm1' value='Remove' onclick='rmv()'>";
+	                            			console.log(data[i].Price);
+	                            			j++;
+	                            		}
+	                            	console.log(data[i].id);                  	
                             	}
                             }
             }
@@ -64,22 +66,38 @@
 		<marquee style="color:Red; font-size:50px;">ONILNE SHOPPING CHANNEL</marquee>
 		<form>
 				<div id="p1"></div>
+					<script type="text/javascript">
+						for (var i = 0; i <= data.length; i++) {
+								var title=document.createElement("h1");
+								title.innerHTML=data[i].Product + data[i].Price;
+								var input =document.createElement("input");
+								var a=document.createElement("a");
+								var link=document.createTextNode("Add To Cart");
+								a.href = "Add To Cart";
+								title.appendChild(input);
+								title.appendChild(a);
+								a.appendChild(link);
+
+			
+								document.getElementById("p1").appendChild(title);
+							}
+					</script>
                 
-                        <script>
+                        <!-- <script>
 							data = %(data)s
 
 							var mainContainer = document.getElementById("p1");
 							var i=0;
-							var j=0;
 							
 							while ( i < data.length) {
     							var div = document.createElement("div");
-    							div.innerHTML = '<div class="dv"><h1>' + data[i].Product +  '<br>' + data[i].Price + '<input type="text" id="input" placeholder="Quantity"> <input type="Button" value="Add To Cart" onclick="btn()"></div>';
+
+    							/*div.innerHTML = '<div class="dv"><h1>' + data[i].Product +  '<br>' + data[i].Price + '<input type="text" id="input" placeholder="Quantity"> <input type="Button" value="Add To Cart" onclick="btn()"></div>';*/
+    							
     							mainContainer.appendChild(div);
-    							i++;
+       							i++;
 								}
-								j++;
-						</script>
+						</script> -->
         </form>
         <div id="dv1">
             <label>----CART----</label>
