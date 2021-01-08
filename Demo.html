@@ -2,106 +2,119 @@
 	<head>
 		<title>E-Cart</title>
 		<style type="text/css">
-			.dv{
+			body{
+				background-color: mediumseagreen;
+			}
+			marquee{
+				color: red;
+				font-size: 50px;
+			}
+			.cards{
 				color: Black;
 		        width:200px;
        			height:200px;
        			border-style: dashed;
-     			}    
-
-     			#p1{
-					text-align: center;
-				    position:absolute;
-				  	width:1800px;
-				  	height:240px;
-				  	padding:10px;
-				  	float:right;
-   				 	}
-			    #p1 > div{
-	  					float:left;
-	  					margin:10px;s
-	  					align-content: center;
-	  					}
-			  	#dv1{
-			  		font-size:25px;
-			  		color:red;
-			 		position:absolute;
-			 		margin-top: 300px;
-
-			  		}
-			  	p{
-			  		background-color:darkgray; width:400px;
-			  	}
+     		}    
+ 			#Data{
+				text-align: center;
+			    position:absolute;
+			  	width:1800px;
+			  	height:240px;
+			  	padding:10px;
+			  	float:right;
+			}
+		    #Data > div{
+  					float:left;
+  					margin:10px;
+  					align-content: center;
+  			}
+  			#crt{
+  				margin-left: 700px;
+  				text-align: center;
+			  	margin-top: 270px;
+			  	border:2px solid black;
+			  	width: 250px;
+  			}
 		</style>
 	</head>
-
-	<script language="JavaScript">
-		data = %(data)s
-            function btn(){
-                            var w=document.getElementById('input').value;
-                            var j=0;
-                            if(w==0)
-                            {
-                               alert("Please Input With Positive Number");
-                            }
-                            else
-                            {
-                            	for (var i = 0; i < data.length; i++) {
-                            			if (j==i){
-	                            			var p=document.getElementById('display').innerHTML = w + data[i].Product + "=" + w*data[i].Price + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp" + "<input type='button' id='rm1' value='Remove' onclick='rmv()'>";
-	                            			console.log(data[i].Price);
-	                            			j++;
-	                            		}
-	                            	console.log(data[i].id);                  	
-                            	}
-                            }
-            }
-            function rmv(){
-                            var w=document.getElementById('input').value="";
-                            document.getElementById('display').innerHTML="";
-            }
-        </script>
-
-	<body style="background-color:mediumseagreen;">
-		<marquee style="color:Red; font-size:50px;">ONILNE SHOPPING CHANNEL</marquee>
+	<body>
+		<marquee>ONILNE SHOPPING CHANNEL</marquee>
 		<form>
-				<div id="p1"></div>
-					<script type="text/javascript">
-						for (var i = 0; i <= data.length; i++) {
-								var title=document.createElement("h1");
-								title.innerHTML=data[i].Product + data[i].Price;
-								var input =document.createElement("input");
-								var a=document.createElement("a");
-								var link=document.createTextNode("Add To Cart");
-								a.href = "Add To Cart";
-								title.appendChild(input);
-								title.appendChild(a);
-								a.appendChild(link);
+			<div id="p1">
+				<input type="text" name="search" id="search" onkeyup="searchFunction()" placeholder="Search"/>
+				<div id="Data"></div>	
+			</div>
+			<div id="crt">
+				<h2>----Cart----</h2>
+				<div id="Cart"></div>
+			</div>
+			<script type="text/javascript">
+				data = %(data)s
+				cartData = %(cartData)s
 
-			
-								document.getElementById("p1").appendChild(title);
-							}
-					</script>
-                
-                        <!-- <script>
-							data = %(data)s
+				function createCard(data) {
+		            let card = document.createElement('div');
+		            card.className = "cards";
 
-							var mainContainer = document.getElementById("p1");
-							var i=0;
-							
-							while ( i < data.length) {
-    							var div = document.createElement("div");
+		            let title = document.createElement('div');
+		            title.innerText = data.Product;
 
-    							/*div.innerHTML = '<div class="dv"><h1>' + data[i].Product +  '<br>' + data[i].Price + '<input type="text" id="input" placeholder="Quantity"> <input type="Button" value="Add To Cart" onclick="btn()"></div>';*/
-    							
-    							mainContainer.appendChild(div);
-       							i++;
-								}
-						</script> -->
-        </form>
-        <div id="dv1">
-            <label>----CART----</label>
-            <p><span  id='display'></span></p>
-        </div>
+		            let price = document.createElement('div');
+		            price.innerText = "Price: " + data.Price;
+
+		            
+		      				        
+					let a = document.createElement('a');
+					
+		            a.href = "/add/to/cart/" + data.id;
+		            a.innerText = "Add to Cart";
+		            a.classname = "input";
+
+		            card.appendChild(title);
+		            card.appendChild(price);
+		            card.appendChild(a);
+		            return card
+		        }
+		        var mainContainer = document.getElementById("p1");
+		        var dataContainer = document.getElementById("Data");
+		        var cartContainer = document.getElementById("Cart");
+		        
+		        for (var i = 0; i < data.length; i++) {
+				let card = this.createCard(data[i])
+		        dataContainer.appendChild(card);
+		        
+		            if (cartData && parseInt(data[i].id) in cartData) {
+		                let div = document.createElement('div');
+		                div.innerText = data[i].Product + " " + data[i].Price;
+		                let a = document.createElement('a');
+		                a.href = "/remove/" + data[i].id;
+		                a.innerText = "Remove";
+		                cartContainer.appendChild(div);
+		                cartContainer.appendChild(a);
+		                console.log(cartData);
+		            }
+		        }
+		        
+		        function searchFunction() {
+		            var input, filter, mainDiv, div, childDiv, i, txtValue;
+		            input = document.getElementById("search");
+		            filter = input.value.toUpperCase();
+		            mainDiv = document.getElementById("Data");
+		            div = mainDiv.getElementsByClassName("cards");
+		            for (i = 0; i < div.length; i++) {
+		                childDiv = div[i].getElementsByTagName("div")[0];
+		                if (childDiv) {
+		                    txtValue = childDiv.textContent || childDiv.innerText;
+		                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+		                        div[i].style.display = "";
+		                    } else {
+		                        div[i].style.display = "none";
+		                    }
+		                }
+		            }
+		        }
+
+			</script>
+		</form>
     </body>
 </html>
