@@ -1,0 +1,40 @@
+#tsk{
+  background-color: black;
+  color:lightgray;
+  font-size: 30px;
+  text-align: center;
+  height:944px;
+  float: left;
+  width:80%;
+  border: 5px solid gray;
+  border-style: outset;
+  border-width: 10px;
+
+}
+#crt{
+  margin-left:80%;
+  text-align: center;
+  height: 944px;
+  font-size: 20px;
+  background-color: lightgray;
+  color:black;
+  border: 5px solid gray;
+  border-style: outset;
+  border-width: 10px;
+
+}
+.task{
+  text-align: center;
+}
+#search{
+  width: 50%;
+}
+#pn{
+  padding: 30px;
+}
+#pp{
+  padding: 30px;
+}
+.cards{
+
+}
