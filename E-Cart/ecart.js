@@ -9,8 +9,10 @@ const actions = {
                 const newTask = {
                     title:title,
                 };
+                
                 state.tasks.push(newTask);
             }
+
         },
         deleteTask({state},title){
             const index = state.tasks.findIndex((n)=> n.title == title);
@@ -24,7 +26,8 @@ const APP_TEMPLATE = xml/* xml */ `
     <h1>Online Shpping</h1>
     <div id="p1">
       <hr></hr>
-        <input type="text" name="search" id="search" placeholder="Search" t-on-keyup="search"/><hr></hr>
+        <input type="text" name="search" id="search" placeholder="Search" t-on-keyup="search"/>
+      <hr></hr>
     </div>
     <t t-foreach="shop" t-as="i" t-key="i.id">
       <div class="cards">
@@ -41,17 +44,20 @@ const APP_TEMPLATE = xml/* xml */ `
       <ui>
         <t t-set="total" t-value="total + shop[j.title-1].price"/>
         <li>
-          <span t-esc="shop[j.title-1].title"></span>
-          <span t-esc="shop[j.title-1].price"></span>
+          <span><t t-esc="shop[j.title-1].title"/>  Rs:  </span>
+          <span><t t-esc="shop[j.title-1].price"/></span>
           <input type="button" t-att-id="j.title" value="Delete" t-on-click="deleteTask"/>
         </li>
       </ui>
     </t>
+    <span>__________________________</span><br></br>
     <span>Total:<t t-esc="total"/></span><br></br>
   </div>
 </div>
 `;
-const tasks =[];
+const intialState ={
+    tasks : []
+};
 
 class Ecart extends Component {
 	static template =APP_TEMPLATE;
@@ -69,7 +75,7 @@ class Ecart extends Component {
         for (i = 0; i < div.length; i++) {
             childDiv = div[i].getElementsByTagName("span")[0];
             if (childDiv) {
-                txtValue = childDiv.textContent || childDiv.innerText;
+                txtValue = childDiv.textContent;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     div[i].style.display = "";
                 } else {
@@ -84,47 +90,41 @@ class Ecart extends Component {
                 this.dispatch("addTask",ev.target.id);
             }
         }
-
     deleteTask(ev) {
       this.dispatch("deleteTask",ev.target.id);
     }
 
     shop = [
     {
-      id: 1,
-      title: "Milk",
-      price: 50,
+      "id": 1,
+      "title": "Milk",
+      "price": 50,
     },
     {
-      id: 2,
-      title: "Candy",
-      price: 20,
+      "id": 2,
+      "title": "Thick-Shake",
+      "price": 100,
     },
     {
-      id: 3,
-      title: "Thick-Shake",
-      price: 100,
+      "id": 3,
+      "title": "Butter-Milk",
+      "price": 20,
     },
     {
-      id: 4,
-      title: "Butter-Milk",
-      price: 20,
-    },
-    {
-      id: 5,
-      title: "Ice-Cream",
-      price: 40,
+      "id": 4,
+      "title": "Ice-Cream",
+      "price": 40,
     },
   ];
 }
 
 function makeStore() {
-  const localState = window.localStorage.getItem("todoapp");
-  const state = localState ? JSON.parse(localState) : this.tasks;
+  const localState = window.localStorage.getItem("Shopping");
+  const state = localState ? JSON.parse(localState) : intialState;
   const store = new Store({ state , actions });
   store.on("update", null, () => {
-    localStorage.setItem("todoapp", JSON.stringify(store.state));
-  });
+    localStorage.setItem("Shopping", JSON.stringify(store.state));
+  });debugger
   return store;
 }
 // Setup code
