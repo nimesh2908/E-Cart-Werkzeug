@@ -1,0 +1,61 @@
+USER:
+	1.Customer
+	2.Admin
+
+	1.CUSTOMER
+			Buy Api Package
+			Call
+			If Customer Have No Credit.
+	2.ADMIN
+			Service And Package Decide
+			
+
+
+USED CREDIT:
+		
+
+REFUND CREDIT:
+			Customer Not Satisfied With Generate Output.
+
+
+
+		DATABASE DESIGN
+
+*User: 
+	1.Role(Customer/Admin)
+	2.Email
+	3.Mobile
+	4.Password
+*Package:
+	1.Name
+	2.Amount
+	3.Credit
+	4.Status
+*Order:
+	1.Customer_ID
+	2.Package_ID
+	3.API-Key
+	4.
+	5.Status:Draft,In Progress,Close,Hold,Cancel.
+*Order Credit:
+		1.Date
+		2.Credit_ID
+		3.Status (Used/Refund)
+		4.
+		5.Order_ID
+*Service Call:
+		1.Date
+		2.Status (Success , Fail , )
+		3.Quality Level
+		4.Feedback
+		5.Response
+*Help Desk:
+		1.Customer_Id
+		2.Date
+		3.Service_ID
+		4.Details
+		5.
+		6.Write Issue
+		7.
+		8.Image Status
+	

@@ -1,0 +1,21 @@
+First user login to our system.
+
+If a user does not register with our system then go for the register.
+
+If a user is first time registered with our system then able to take some free credit. 
+
+After registration user login with our system.
+
+After login, users have to choose an image file and upload it.
+
+Then our system removes the background of that image.
+
+Then after the user chooses another image to put in the background as they like.
+
+After that the image is ready to show to the user.
+
+Users download it.
+
+And per image credit will decrease.
+
+If the user gets more images, the background changes. then they must purchase credit to use our services more.

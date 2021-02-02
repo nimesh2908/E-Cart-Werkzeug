@@ -23,7 +23,7 @@ const actions = {
 const APP_TEMPLATE = xml/* xml */ `
 <div>
   <div id="tsk">  
-    <h1>Online Shpping</h1>
+    <h1>Online Shopping</h1>
     <div id="p1">
       <hr></hr>
         <input type="text" name="search" id="search" placeholder="Search" t-on-keyup="search"/>
@@ -55,7 +55,7 @@ const APP_TEMPLATE = xml/* xml */ `
   </div>
 </div>
 `;
-const intialState ={
+const initialState ={
     tasks : []
 };
 
@@ -95,6 +95,7 @@ class Ecart extends Component {
     }
 
     shop = [
+    {},
     {
       "id": 1,
       "title": "Milk",
@@ -120,7 +121,7 @@ class Ecart extends Component {
 
 function makeStore() {
   const localState = window.localStorage.getItem("Shopping");
-  const state = localState ? JSON.parse(localState) : intialState;
+  const state = localState ? JSON.parse(localState) : initialState;
   const store = new Store({ state , actions });
   store.on("update", null, () => {
     localStorage.setItem("Shopping", JSON.stringify(store.state));
