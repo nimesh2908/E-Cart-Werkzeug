@@ -5,39 +5,42 @@ const { useRef, useDispatch, useState, useStore } = owl.hooks;
 const {qweb} = owl;
 
 import { Signup } from "./signup.js";
+import { Navbar } from "./Navbar.js";
+import { Content } from "./Content.js";
+import { Footer } from "./Footer.js";
+
 
 const APP_TEMPLATE = xml/* xml */ `
 <div>
-	<h1 align="center">Background Remove Tool</h1>
-		<div align="center">
-			<input type="button" value="Sign-Up" t-on-click="signup"/>
-		<Signup/>
-		</div>
+	<div>
+		<Navbar/>
+		<Content/>
+		<Footer/>
+	</div>
 </div>`;
 
 class BRT extends Component {
 	static template =APP_TEMPLATE;
-	static components={Signup};
+	static components={Navbar,Content,Footer};
 
 	signup(){
-		alert("Welcome");
-		/*return this.env.router.navigate({ to: 'Signup'});*/
-		alert("logout");
+		return this.env.router.navigate({ to: 'SIGNUP'});
 	}
-
 	
 }
-/*export const ROUTES = [
-	  { name: "SIGNUP", path: "./signup", component: Signup },
-];*/
 
-/*function makeEnvironment() {
+const ROUTES = [
+	  { name: "SIGNUP", path: "/signup", component: Signup },
+];
+
+function makeEnvironment() {
+
     const env = { qweb };
-    const router = new owl.router.Router(env, ROUTES);
+    env.router = new owl.router.Router(env, ROUTES);
     env.router.start();
     return env;
 }
-	BRT.env=makeEnvironment();*/
+BRT.env = makeEnvironment();
 
 // Setup code
 function setup() {
