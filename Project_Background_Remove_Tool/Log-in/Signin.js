@@ -31,31 +31,35 @@ export class Signin extends Component {
 							</div>`;
 
 	constructor() {
-            super(...arguments);
-            this.state = useState({
-                invalid: undefined,
-            });
-        }
+        super(...arguments);
+        this.state = useState({
+            invalid: undefined,
+        });
+    }
 
 	OnLoginsubmit(ev){
-    const xhr = new window.XMLHttpRequest();
-    xhr.open('POST', '/do_login');
-    const formData = new FormData(ev.currentTarget);
-    xhr.send(JSON.stringify(Object.fromEntries(formData.entries())));
-    xhr.onload = async () => {
-        const response = JSON.parse(xhr.response);
-        if (response.email === false) {
-        	this.state.invalid = "Please Enter Valid Username";
-        }
-        else if (response.password === false) {
-        	this.state.invalid = "Please Enter Valid Password";
-        } 
-        else {
-        	console.log(response.session_id)
-        	this.env.router.navigate({to:'remove_bg'});
-            document.cookie = response.session_id;
-            this.env.bus.trigger('login_changed', {valid: true});
-        }
-   	};
+	    const xhr = new window.XMLHttpRequest();
+	    xhr.open('POST', '/do_login');
+	    const formData = new FormData(ev.currentTarget);
+	    xhr.send(JSON.stringify(Object.fromEntries(formData.entries())));
+	    xhr.onload = async () => {
+	        const response = JSON.parse(xhr.response);
+	        if (response.email === false) {
+	        	this.state.invalid = "Please Enter Valid Username";
+	        }
+	        else if (response.password === false) {
+	        	this.state.invalid = "Please Enter Valid Password";
+	        } 
+	        else {
+	        	document.cookie = `session_id=${response.session_id}`;
+	        	odoo.session_info = {
+	                    user_id: response.user_id,
+	                    is_valid: response.is_valid,
+	                    session_id: response.session_id,
+	            }
+	            this.env.bus.trigger('login_changed');
+	        	this.env.router.navigate({to:'profile'});
+	       }
+	   	};
 	}
 }

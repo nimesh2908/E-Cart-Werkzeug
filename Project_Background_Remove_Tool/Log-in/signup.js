@@ -13,19 +13,19 @@ export class Signup extends Component {
     }
 
 	onFormSubmit(ev){
-            const xhr = new window.XMLHttpRequest();
-            xhr.open('POST', '/do_signup');
-            const formData = new FormData(ev.currentTarget);
-            xhr.send(JSON.stringify(Object.fromEntries(formData.entries())));
-            xhr.onload = async () => {
-            const response = JSON.parse(xhr.response);
-                if (response.exist === true) {
-                    this.state.exist = "This Email Already Used Try For Another Email";
-                }else{
-                    this.env.router.navigate({to: 'signin'});
-                }
-            };
-        }
+        const xhr = new window.XMLHttpRequest();
+        xhr.open('POST', '/do_signup');
+        const formData = new FormData(ev.currentTarget);
+        xhr.send(JSON.stringify(Object.fromEntries(formData.entries())));
+        xhr.onload = async () => {
+        const response = JSON.parse(xhr.response);
+            if (response.exist === true) {
+                this.state.exist = "This Email Already Used Try For Another Email";
+            }else{
+                this.env.router.navigate({to: 'signin'});
+            }
+        };
+    }
 
 	_checkPwd() {
             if (!this.state.pwd || !this.state.repwd) {
@@ -48,7 +48,7 @@ export class Signup extends Component {
             this._checkPwd();
         }
 	
-	static template = xml`	<div class="d-flex justify-content-center" style="height:30em;">
+	static template = xml`	<div class="d-flex justify-content-center" style="height:35em;">
 								<div class="card text-center">
 									<div class="card-header">
 								    	Signup Form
@@ -59,6 +59,10 @@ export class Signup extends Component {
 								    			<label for="exampleInputEmail1" class="form-label">Email address</label>
 								    			<input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required="true"/>
 								  			</div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Credit:</label>
+                                                <input name="credit" type="text" class="form-control" required="true"/>
+                                            </div>
 								  			<div class="mb-3">
 								    			<label for="exampleInputPassword1" class="form-label">Password</label>
 								    			<input name="password" type="password" t-model="state.pwd" t-on-keyup="_onKeyUpPwd" class="form-control" id="exampleInputPassword1" required="true"/>

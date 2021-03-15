@@ -9,7 +9,7 @@ import uuid
 from Connection import Connection
 from http.server import SimpleHTTPRequestHandler, HTTPServer
 from psycopg2 import Error
-    
+from urllib.parse import parse_qs
 
 class myHandler(SimpleHTTPRequestHandler):
     db_connection = Connection()
@@ -23,85 +23,111 @@ class myHandler(SimpleHTTPRequestHandler):
             data = json.loads(data)
             user_data = self.db_connection.check_email(data)
             if user_data is None:
-            	print("----Create A New User----")
-            	user_data = self.db_connection.create_user(data)
-            	return self.wfile.write(json.dumps({'exist': False}).encode())
+                print("----Create A New User----")
+                user_data = self.db_connection.create_user(data)
+                return self.wfile.write(json.dumps({'exist': False}).encode())
             else:
-            	print("----User Already Exist----")
-            	return self.wfile.write(json.dumps({'exist': True}).encode())
-            	
+                print("----User Already Exist----")
+                return self.wfile.write(json.dumps({'exist': True}).encode())
+                
             # return self.wfile.write(True)
         elif self.path == '/do_login':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
             user_data = self.db_connection.user_exists(data)
             if user_data is None:
-            	email = self.db_connection.check_email(data)
-            	password = self.db_connection.check_password(data)
-            	if email is None:
-            		print("----Email Not Match----")
-            		return self.wfile.write(json.dumps({'email': False}).encode())
-            	elif password is None:
-            		print("----Password Not Match----")
-            		return self.wfile.write(json.dumps({'password': False}).encode())
+                email = self.db_connection.check_email(data)
+                password = self.db_connection.check_password(data)
+                if email is None:
+                    print("----Email Not Match----")
+                    return self.wfile.write(json.dumps({'email': False}).encode())
+                elif password is None:
+                    print("----Password Not Match----")
+                    return self.wfile.write(json.dumps({'password': False}).encode())
             else:
-            	print("----Email And Password Matched----")
-            	session_id = str(uuid.uuid4())
-            	self.db_connection.create_user_session(session_id, user_data[0])
-            	return self.wfile.write(json.dumps({'session_id': session_id}).encode())
+                print("----Email And Password Matched----")
+                session_id = str(uuid.uuid4())
+                self.db_connection.create_user_session(session_id, user_data[0])
+                return self.wfile.write(json.dumps({'session_id': session_id, 'user_id': user_data[0], 'is_valid': True}).encode())
 
         elif self.path == '/session_validate':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
             user = self.db_connection.session_validate(data) 
             if user is None:
-            	print("----User Are There----")
-            	return self.wfile.write(json.dumps({'valid': True}).encode())
+                print("----User Are There----")
+                return self.wfile.write(json.dumps({'valid': True}).encode())
             else:
-            	print("----Not User Found----")
-            	return self.wfile.write(json.dumps({'valid': False}).encode())  	
+                print("----Not User Found----")
+                return self.wfile.write(json.dumps({'valid': False}).encode())      
 
         elif self.path == '/do_logout':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
+            print(data)
             user_data = self.db_connection.user_logout(data)
             print("----User logout----")
             return self.wfile.write(json.dumps({'logout': "done"}).encode())
 
         elif self.path == '/do_credit':
-        	data = self.rfile.read(int(self.headers.get('Content-Length')))
-        	data = json.loads(data)
-        	user_data = self.db_connection.user_credit(data)
-        	print("----User Credit----")
-        	return self.wfile.write(json.dumps({'Credit': "done"}).encode())
+            data = self.rfile.read(int(self.headers.get('Content-Length')))
+            data = json.loads(data)
+            user_data = self.db_connection.user_credit(data)
+            print(user_data)
+            print("----User Credit----")
+            return self.wfile.write(json.dumps({'Credit': user_data}).encode())
+
 
 
     def do_GET(self):
-        if self.path in ['/', '/signin', '/signup', '/remove_bg']:
+        if self.path in ['/', '/signup', '/signin', '/remove_bg', '/credit', '/profile']:
             with open('index.html') as f:
+                Cookie = self.headers.get('Cookie')
+                session_id = False
+                html = f.read()
+                session_info = {
+                    'user_id': None,
+                    'is_valid': False,
+                    'session_id': session_id,
+                }
+                if Cookie:
+                    session_cookie = parse_qs(Cookie.replace(' ', ''))
+                    if session_cookie.get('session_id'):
+                        session_id = session_cookie.get('session_id')[0]
+                        user = self.db_connection.session_validate({'session_id': session_id})
+                        if user and len(user):
+                            user_credit = self.db_connection.user_credit({'session_id': session_id})
+                            print(user_credit)
+                            session_info = {
+                                'user_id': user[0],
+                                'is_valid': True,
+                                'session_id': session_id,
+                                'credit': user_credit,
+                            }
+                html = html.replace('$session_info', json.dumps(session_info))
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
-                self.wfile.write(f.read().encode())
+                self.wfile.write(html.encode())
         else:
-        	super(myHandler, self).do_GET()
-            
+            super(myHandler, self).do_GET()
+           
 def start_server():
-    SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
-    httpd = HTTPServer(('0.0.0.0', 3600), myHandler)
-    httpd.serve_forever()
+   SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
+   httpd = HTTPServer(('0.0.0.0', 3600), myHandler)
+   httpd.serve_forever()
 
 url = 'http://127.0.0.1:3600'
 
 if __name__ == "__main__":
-    print("----------------------")
-    print("----------------------")
-    print("Server running on: {}".format(url))
-    threading.Thread(target=start_server, daemon=True).start()
+   print("----------------------")
+   print("----------------------")
+   print("Server running on: {}".format(url))
+   threading.Thread(target=start_server, daemon=True).start()
 
-    while True:
-        try:
-            time.sleep(1)
-        except KeyboardInterrupt:
-            httpd.server_close()
-            quit(0)
+   while True:
+       try:
+           time.sleep(1)
+       except KeyboardInterrupt:
+           httpd.server_close()
+           quit(0)

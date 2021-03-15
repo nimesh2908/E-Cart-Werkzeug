@@ -19,10 +19,11 @@ class Connection():
             user = '''CREATE TABLE users(
                 id SERIAL PRIMARY KEY,
                 email varchar  NOT NULL unique,
+                mobile varchar NOT NULL,
                 password varchar NOT NULL,
                 repassword varchar NOT NULL,
-                session varchar
-                
+                session varchar,
+                credit varchar
             );'''
             self.cr.execute(user);
         else:
@@ -34,30 +35,31 @@ class Connection():
         self.cr = self.connection.cursor()
 
     def create_user(self, data):
-        user = """INSERT INTO users (email, password, repassword) VALUES ('%s', '%s', '%s')""" % (data['email'], data['password'], data['repassword']);
+        user = """INSERT INTO users (email, mobile, password, repassword, credit) VALUES ('%s', '%s', '%s', '%s', '%s')""" % (data['email'], data['mobile'], data['password'], data['repassword'], data['credit']);
         self.cr.execute(user)
 
     def user_exists(self, data):
-        self.cr.execute("SELECT user_id FROM users WHERE email='%s' and password='%s'" % (data['email'], data['password']))
+        self.cr.execute("SELECT id FROM users WHERE email='%s' and password='%s'" % (data['email'], data['password']))
         return self.cr.fetchone()
 
     def check_email(self, data):
-        self.cr.execute("SELECT user_id FROM users WHERE email='%s'" % (data['email']))
+        self.cr.execute("SELECT id FROM users WHERE email='%s'" % (data['email']))
         return self.cr.fetchone()
 
     def check_password(self, data):
-        self.cr.execute("SELECT user_id FROM users WHERE password='%s'" % (data['password']))
+        self.cr.execute("SELECT id FROM users WHERE password='%s'" % (data['password']))
         return self.cr.fetchone()
 
     def create_user_session(self, session_id, user_id):
-        self.cr.execute("UPDATE users set session='%s' where user_id=%s" % (session_id, user_id))
+        self.cr.execute("UPDATE users set session='%s' where id=%s" % (session_id, user_id))
 
     def session_validate(self, data):
-        self.cr.execute("SELECT user_id FROM users WHERE session='%s'" % (data['session_id']))
+        self.cr.execute("SELECT id FROM users WHERE session='%s'" % (data['session_id']))
         return self.cr.fetchone()
 
     def user_logout(self, data):
         self.cr.execute("UPDATE users SET session=null WHERE session='%s'" % (data['session_id']))
 
     def user_credit(self, data):
-        self.cr.execute("SELECT user_id FROM users WHERE email='%s'" % (data['email']))
+        self.cr.execute("SELECT credit FROM users WHERE session='%s'" %(data['session_id']))
+        return self.cr.fetchall()

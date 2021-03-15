@@ -12,6 +12,8 @@ import { RemoveBG } from "./RemoveBG.js";
 import { Signin } from "./Signin.js";
 import { Signup } from "./signup.js";
 import { Credit } from "./Credit.js";
+import { Profile } from "./Profile.js";
+
 
 const APP_TEMPLATE = xml/* xml */ `
 						<div>
@@ -26,32 +28,17 @@ const APP_TEMPLATE = xml/* xml */ `
 
 class BackgroundRemoveTool extends Component {
 	static template = APP_TEMPLATE;
-	static components = { Content, Footer, Header, RouteComponent, RemoveBG, Signup, Signin, Credit };
-
-async willStart() {
-        const session_id = document.cookie;
-        console.log(session_id);
-        if (session_id) {
-            const xhr = new window.XMLHttpRequest();
-            xhr.open('POST', '/session_validate');
-            xhr.send(JSON.stringify({'session_id': session_id}));
-            xhr.onload = async () => {
-            	this.env.bus.trigger('login_changed', {valid: true});
-            	alert("Welcome");
-            };
-        }
-        else
-        {
-        	this.env.bus.trigger('login_changed', {valid: false});
-        }
-    }
+	static components = { Content, Footer, Header, RouteComponent, RemoveBG, Signup, Signin, Credit, Profile };
 }
+
 const ROUTES = [
 	{ name: "home", path: "/",component: Content},
 	{ name: "signup", path: "/signup", component: Signup },
 	{ name: "signin", path: "/signin", component: Signin },
 	{ name: "remove_bg", path: "/remove_bg", component: RemoveBG },
 	{ name: "credit", path: "/credit", component: Credit },
+	{ name: "profile", path: "/profile", component: Profile },
+
 
 ];
 
@@ -68,7 +55,6 @@ BackgroundRemoveTool.env = makeEnvironment();
 async function setup() {
 	
 	const intanceBRT=new BackgroundRemoveTool();
-	/*await bgrmtl.env.router.navigate({to: 'login'});*/
  	intanceBRT.mount(document.body);
 }
 
