@@ -13,6 +13,8 @@ import { Signin } from "./Signin.js";
 import { Signup } from "./signup.js";
 import { Credit } from "./Credit.js";
 import { Profile } from "./Profile.js";
+import { Admin } from "./Admin.js";
+
 
 
 const APP_TEMPLATE = xml/* xml */ `
@@ -28,7 +30,7 @@ const APP_TEMPLATE = xml/* xml */ `
 
 class BackgroundRemoveTool extends Component {
 	static template = APP_TEMPLATE;
-	static components = { Content, Footer, Header, RouteComponent, RemoveBG, Signup, Signin, Credit, Profile };
+	static components = { Content, Footer, Header, RouteComponent };
 }
 
 const ROUTES = [
@@ -38,8 +40,7 @@ const ROUTES = [
 	{ name: "remove_bg", path: "/remove_bg", component: RemoveBG },
 	{ name: "credit", path: "/credit", component: Credit },
 	{ name: "profile", path: "/profile", component: Profile },
-
-
+	{ name: "admin", path: "/admin", component: Admin },
 ];
 
 function makeEnvironment() {

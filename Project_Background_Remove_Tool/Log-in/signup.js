@@ -9,6 +9,7 @@ export class Signup extends Component {
                 pwd: "",
                 repwd: "",
                 pwmatch: undefined,
+                signin: false,
             });
     }
 
@@ -48,7 +49,7 @@ export class Signup extends Component {
             this._checkPwd();
         }
 	
-	static template = xml`	<div class="d-flex justify-content-center" style="height:35em;">
+	static template = xml`	<div class="d-flex justify-content-center" style="height:30em;">
 								<div class="card text-center">
 									<div class="card-header">
 								    	Signup Form
@@ -59,10 +60,6 @@ export class Signup extends Component {
 								    			<label for="exampleInputEmail1" class="form-label">Email address</label>
 								    			<input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required="true"/>
 								  			</div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Credit:</label>
-                                                <input name="credit" type="text" class="form-control" required="true"/>
-                                            </div>
 								  			<div class="mb-3">
 								    			<label for="exampleInputPassword1" class="form-label">Password</label>
 								    			<input name="password" type="password" t-model="state.pwd" t-on-keyup="_onKeyUpPwd" class="form-control" id="exampleInputPassword1" required="true"/>
@@ -74,9 +71,6 @@ export class Signup extends Component {
 								  			<div t-if="state.pwmatch === false">
                 								<h4>Password Does not match</h4>
             								</div>
-            								<t t-esc="state.pwd"/>
-								            <t t-esc="state.repwd"/>
-								            <t t-esc="state.pwmatch"/>
                                             <t t-esc="state.exist"/>
                                             <br></br>
 								  			<button id="signupBtnId" type="submit" disabled="True" class="btn btn-secondary">Submit</button>

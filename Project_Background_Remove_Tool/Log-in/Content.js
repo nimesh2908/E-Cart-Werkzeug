@@ -9,13 +9,28 @@ export class Content extends Component {
 				    	<div class="carousel-item active" data-bs-interval="10000">
 				      		<img src="/img/image3" class="d-block w-100"/>
 				        	<div class="centered">
-				        		<h1>
-									Remove backgrounds 100% automatically in 5 seconds with zero clicks
-								</h1>
-								<p>
-									There are approximately 20 million more interesting activities than removing backgrounds by hand.
-									Thanks to Background Remove Tool AI, you can slash editing time - and have more fun!
-								</p>
+				        		<div style="margin-bottom:500px;">
+				        			<div class="d-flex justify-content-center " style="height:26em;">
+										<div class="card text-center border border-white border border-5 bg-transparent text-white">
+											<div class="card-header text-white">
+								    			Upload Image
+								  			</div>
+											<div class="card-body">
+									  			<input class="form-control" type="file" id="formFile"/>
+									  			<button class="btn btn-primary">Upload</button>
+											</div>
+										</div>
+									</div>
+									<div class="mt-4">
+					        		<h1>
+										Remove backgrounds 100% automatically in 5 seconds with zero clicks
+									</h1>
+									<p>
+										There are approximately 20 million more interesting activities than removing backgrounds by hand.
+										Thanks to Background Remove Tool AI, you can slash editing time - and have more fun!
+									</p>
+									</div>
+				        		</div>
 							</div>
 				    	</div>
 				    	<div class="carousel-item" data-bs-interval="2000">

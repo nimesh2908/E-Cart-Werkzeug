@@ -3,6 +3,8 @@ const { xml } = owl.tags;
 
 export class Credit extends Component {
 
+
+
 	constructor() {
       super(...arguments);
       // event_type, owner, callback

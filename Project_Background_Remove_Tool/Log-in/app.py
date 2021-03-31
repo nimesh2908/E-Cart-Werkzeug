@@ -5,6 +5,7 @@ import psycopg2
 import threading
 import time
 import uuid
+import datetime
 
 from Connection import Connection
 from http.server import SimpleHTTPRequestHandler, HTTPServer
@@ -12,12 +13,14 @@ from psycopg2 import Error
 from urllib.parse import parse_qs
 
 class myHandler(SimpleHTTPRequestHandler):
+
     db_connection = Connection()
 
     def do_POST(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/json')
         self.end_headers()
+
         if self.path == '/do_signup':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
@@ -29,26 +32,28 @@ class myHandler(SimpleHTTPRequestHandler):
             else:
                 print("----User Already Exist----")
                 return self.wfile.write(json.dumps({'exist': True}).encode())
-                
-            # return self.wfile.write(True)
+
         elif self.path == '/do_login':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
-            user_data = self.db_connection.user_exists(data)
-            if user_data is None:
-                email = self.db_connection.check_email(data)
-                password = self.db_connection.check_password(data)
-                if email is None:
-                    print("----Email Not Match----")
-                    return self.wfile.write(json.dumps({'email': False}).encode())
-                elif password is None:
-                    print("----Password Not Match----")
-                    return self.wfile.write(json.dumps({'password': False}).encode())
+            check_role = self.db_connection.check_role(data)
+            email = self.db_connection.check_email(data)
+            password = self.db_connection.check_password(data)
+            if email is not None:
+                if email == password:
+                    print("----Email And Password Matched----")
+                    session_id = str(uuid.uuid4())
+                    self.db_connection.create_user_session(session_id, email[0])
+                    credit = self.db_connection.credit(email)
+                    if "Customer" in check_role:
+                        return self.wfile.write(json.dumps({'session_id': session_id, 'user_id': email[0], 'is_valid': True, 'credit': credit, 'role': "Customer"}).encode())
+                    else:
+                        return self.wfile.write(json.dumps({'session_id': session_id, 'user_id': email[0], 'is_valid': True, 'credit': credit, 'role': "Admin"}).encode())
+                else:
+                    if email != password:
+                        return self.wfile.write(json.dumps({'email': False}).encode())
             else:
-                print("----Email And Password Matched----")
-                session_id = str(uuid.uuid4())
-                self.db_connection.create_user_session(session_id, user_data[0])
-                return self.wfile.write(json.dumps({'session_id': session_id, 'user_id': user_data[0], 'is_valid': True}).encode())
+                return self.wfile.write(json.dumps({'email': False}).encode())
 
         elif self.path == '/session_validate':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
@@ -59,28 +64,87 @@ class myHandler(SimpleHTTPRequestHandler):
                 return self.wfile.write(json.dumps({'valid': True}).encode())
             else:
                 print("----Not User Found----")
-                return self.wfile.write(json.dumps({'valid': False}).encode())      
+                return self.wfile.write(json.dumps({'valid': False}).encode())  
 
-        elif self.path == '/do_logout':
+        elif self.path == '/do_upload':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
-            print(data)
-            user_data = self.db_connection.user_logout(data)
-            print("----User logout----")
-            return self.wfile.write(json.dumps({'logout': "done"}).encode())
+            upload = self.db_connection.upload(data)
+            decrease = self.db_connection.decrease_credit(data)
+            order = self.db_connection.order(upload)
+
+        elif self.path == '/do_customer_details':
+            details = self.db_connection.customer_details()
+            return self.wfile.write(json.dumps({'details': details}).encode())
+
+        elif self.path == '/do_order_details':
+            order = self.db_connection.order_details()
+            result_data = list()
+            for date in order:
+                date = {
+                        'id': date[0],
+                        'user_id': date[1],
+                        'day': date[2].day,
+                        'month': date[2].month,
+                        'year': date[2].year,
+                        'hour': date[2].hour,
+                        'minute': date[2].minute,
+                        'email': date[3],
+                        }
+                result_data.append(date)
+            return self.wfile.write(json.dumps({'order': result_data}).encode())
 
         elif self.path == '/do_credit':
             data = self.rfile.read(int(self.headers.get('Content-Length')))
             data = json.loads(data)
-            user_data = self.db_connection.user_credit(data)
-            print(user_data)
+            user_data = self.db_connection.update_credit(data)
             print("----User Credit----")
-            return self.wfile.write(json.dumps({'Credit': user_data}).encode())
+            return self.wfile.write(json.dumps({'credit': user_data}).encode())
 
+        elif self.path == '/do_usage':
+            data = self.rfile.read(int(self.headers.get('Content-Length')))
+            data = json.loads(data)
+            usage = self.db_connection.usage(data)
+            result_data = list()
+            for usage_details in usage:
+                usage_details = {
+                        'id': usage_details[0],
+                        'day': usage_details[1].day,
+                        'month': usage_details[1].month,
+                        'year': usage_details[1].year,
+                        'hour': usage_details[1].hour,
+                        'minute': usage_details[1].minute,
+                        }
+                result_data.append(usage_details)
+            return self.wfile.write(json.dumps({'usage_details': result_data}).encode())
 
+        elif self.path == '/do_billing':
+            data = self.rfile.read(int(self.headers.get('Content-Length')))
+            data = json.loads(data)
+            billing = self.db_connection.billing(data)
+            result_data = list()
+            for billing_details in billing:
+                billing_details = {
+                        'id': billing_details[0],
+                        'day': billing_details[1].day,
+                        'month': billing_details[1].month,
+                        'year': billing_details[1].year,
+                        'hour': billing_details[1].hour,
+                        'minute': billing_details[1].minute,
+                        'credit': billing_details[2],
+                        }
+                result_data.append(billing_details)
+            return self.wfile.write(json.dumps({'billing_details': result_data}).encode())
+
+        elif self.path == '/do_logout':
+            data = self.rfile.read(int(self.headers.get('Content-Length')))
+            data = json.loads(data)
+            user_data = self.db_connection.user_logout(data)
+            print("----User logout----")
+            return self.wfile.write(json.dumps({'logout': "done"}).encode())
 
     def do_GET(self):
-        if self.path in ['/', '/signup', '/signin', '/remove_bg', '/credit', '/profile']:
+        if self.path in ['/', '/signup', '/signin', '/remove_bg', '/credit', '/profile', '/admin']:
             with open('index.html') as f:
                 Cookie = self.headers.get('Cookie')
                 session_id = False
@@ -89,20 +153,22 @@ class myHandler(SimpleHTTPRequestHandler):
                     'user_id': None,
                     'is_valid': False,
                     'session_id': session_id,
+                    'credit': None,
                 }
                 if Cookie:
                     session_cookie = parse_qs(Cookie.replace(' ', ''))
                     if session_cookie.get('session_id'):
                         session_id = session_cookie.get('session_id')[0]
                         user = self.db_connection.session_validate({'session_id': session_id})
+                        user_credit = self.db_connection.user_credit({'session_id': session_id})
+                        role = self.db_connection.get_user_role_session_val({'session_id': session_id})
                         if user and len(user):
-                            user_credit = self.db_connection.user_credit({'session_id': session_id})
-                            print(user_credit)
                             session_info = {
                                 'user_id': user[0],
                                 'is_valid': True,
                                 'session_id': session_id,
                                 'credit': user_credit,
+                                'role': role[0],
                             }
                 html = html.replace('$session_info', json.dumps(session_info))
                 self.send_response(200)

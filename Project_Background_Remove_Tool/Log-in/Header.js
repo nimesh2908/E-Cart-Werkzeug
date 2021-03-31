@@ -12,15 +12,25 @@ export class Header extends Component {
 			<ul class="nav justify-content-end">
 				<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 					<t t-if="state.user_id and state.is_valid">
-					<li class="nav-item" role="presentation">
-						<button style="color:white;" class="nav-link" id="pills-home-tab" data-bs-toggle="pill" type="button" t-on-click="onClickRemoveBg">Background Remove</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button style="color:white;" class="nav-link active" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickProfile">Profile</button>
-					</li>
-					<li class="nav-item" role="presentation">
-						<button style="color:white;" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickLogout">Logout</button>
-					</li>
+						<t t-if="state.role=='Customer'">
+							<li class="nav-item" role="presentation">
+								<button style="color:white;" class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" type="button" t-on-click="onClickRemoveBg">Background Remove</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button style="color:white;" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickProfile">Profile</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button style="color:white;" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickLogout">Logout</button>
+							</li>
+						</t>
+						<t t-else="">
+							<li class="nav-item" role="presentation">
+								<button style="color:white;" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickDashboard">Home</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button style="color:white;" class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="" type="button" role="tab" aria-controls="pills-contact" aria-selected="false" t-on-click="onClickLogout">Logout</button>
+							</li>
+						</t>
 					</t>
 					<t t-else="">
 					<li class="nav-item" role="presentation">
@@ -47,6 +57,7 @@ export class Header extends Component {
             is_valid: odoo.session_info.is_valid,
             session_id: odoo.session_info.session_id,
             credit: odoo.session_info.credit,
+            role: odoo.session_info.role,
         });
     }
     _loginChanged (ev) {
@@ -68,8 +79,12 @@ export class Header extends Component {
 		await this.env.router.navigate({ to: 'remove_bg' });
 	}
 	async onClickProfile(ev){
-
+		/*odoo.session_info*/
 		await this.env.router.navigate({ to: 'profile' });
+	    this.env.bus.trigger('dataChange');
+	}
+	async onClickDashboard(ev){
+		await this.env.router.navigate({ to: 'admin' });
 	}
 	/*async onClickCredit(ev){
 	

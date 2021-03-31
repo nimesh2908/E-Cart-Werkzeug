@@ -49,16 +49,33 @@ export class Signin extends Component {
 	        }
 	        else if (response.password === false) {
 	        	this.state.invalid = "Please Enter Valid Password";
-	        } 
-	        else {
+	        }
+	        else if(response.role == "Customer")
+	        {
 	        	document.cookie = `session_id=${response.session_id}`;
 	        	odoo.session_info = {
 	                    user_id: response.user_id,
 	                    is_valid: response.is_valid,
 	                    session_id: response.session_id,
+	                    credit: response.credit,
+	                    role: response.role,
 	            }
 	            this.env.bus.trigger('login_changed');
-	        	this.env.router.navigate({to:'profile'});
+	        	this.env.router.navigate({to:'remove_bg'});
+	       }
+	       else if(response.role == "Admin")
+	        {
+	        	document.cookie = `session_id=${response.session_id}`;
+	        	odoo.session_info = {
+	                    user_id: response.user_id,
+	                    is_valid: response.is_valid,
+	                    session_id: response.session_id,
+	                    credit: response.credit,
+	                    role: response.role,
+	            }
+	            alert(odoo.session_info.role);
+	            this.env.bus.trigger('login_changed');
+	        	this.env.router.navigate({to:'admin'});
 	       }
 	   	};
 	}

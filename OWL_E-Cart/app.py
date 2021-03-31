@@ -7,11 +7,11 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 def start_server():
     SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
-    httpd = HTTPServer(('0.0.0.0', 3600), SimpleHTTPRequestHandler)
+    httpd = HTTPServer(('0.0.0.0', 3601), SimpleHTTPRequestHandler)
     httpd.serve_forever()
     
 
-url = 'http://127.0.0.1:3600'
+url = 'http://127.0.0.1:3601'
 
 if __name__ == "__main__":
     print("Owl Application")
